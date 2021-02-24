@@ -1,0 +1,111 @@
+
+{% include 'header.html' %}
+
+{% block content %}
+<!-- Main content -->
+<section class="content">
+   <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+         <!-- general form elements -->
+            <!-- general form elements -->
+         <div class='box'>
+            <div class="box-header with-border">
+               <h3 class="box-title">Board List</h3>
+            </div>
+            <div class='box-body'>
+                <select id="searchType">
+                    <option value="title">제목</option>
+                    <option value="writer">작성자</option>
+                </select>
+                <input type="text" id = "searchKeyword">
+                <button id='searchBtn'>Search Board</button>
+                <button id='newBtn'>New Board</button> <!-- form 형식이 아니라, submit을 하지 못함. 따라서 script로 처리해야함 -->
+
+            </div>
+         </div>
+
+          <div class="box">
+            <div class="box-header with-border">
+               <h3 class="box-title">LIST ALL PAGE</h3>
+            </div>
+            <div class="box-body">
+{% if boards %} <!-- 데이터가 없으면 없다는 문구 나오게 하기 (조건문 작성) -->
+<table class="table table-bordered">
+   <tr>
+      <th style="width: 10px">BNO</th>
+      <th>TITLE</th>
+      <th>WRITER</th>
+      <th>REGDATE</th>
+      <th style="width: 40px">VIEWCNT</th>
+   </tr>
+
+   <tbody id="tbody">
+   {% for board in boards %} <!-- 벡엔드에 있는 데이터를 여러번 가져와야 하기 때문에 loop를 돌리는 작업 -->
+   <tr>
+      <td>{{board.id}}</td>
+      <td><a href="{% url 'bbs_read' id=board.id %}">{{board.title}}</a></td>  <!-- get방식일때 -->
+      <td>{{board.writer}}</td>
+      <td>{{board.regdate}}</td>
+      <td><span class="badge bg-red">{{board.viewcnt}}</span></td>
+   </tr>
+    {% endfor %}
+   </tbody>
+</table>
+{% else %} <!-- 데이터가 없다면? -->
+               <p> 데이터가 존재하지 않습니다 </p>
+{% endif %} <!-- if절 끝 마무리 하는 구문 -->
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">Footer</div>
+            <!-- /.box-footer-->
+         </div>
+      </div>
+      <!--/.col (left) -->
+
+   </div>
+   <!-- /.row -->
+</section>
+<!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+<!-- location.href = 스크립트 안에서 앵커 역할을 함.-->
+<!-- ../bbs_registerForm ..을 준 이유는 경로를 맞추기 위해-->
+<script>
+   $(document).ready(function(){
+      $('#newBtn').click(function(){ <!-- id=newBtn이기 때문에, #newBtn -->
+         location.href = '../bbs_registerForm'
+      })
+       $('#searchBtn').click(function (){
+           type = $('#searchType').val() // val() : 선택한 양식의 값을 가져옵니다.
+           keyword = $('#searchKeyword').val()
+           $.ajax({
+               url : "{% url 'bbs_search' %}" ,
+               type : "post",
+               data : {"csrfmiddlewaretoken" : '{{csrf_token}}',
+                   type : type ,
+                   keyword : keyword },
+               dataType : 'json' ,
+               success : function(ary){
+                   var txt = "";
+					$.each(ary , function(idx, obj) {
+						txt +="<tr><td>"+obj.id+"</td>" ;
+						txt +="<td><a href=../bbs_read/"+obj.id+">"+obj.title+"</a></td>";
+						txt +="<td>"+obj.writer+"</td>";
+						txt +="<td>"+obj.regdate+"</td>";
+						txt +="<td><span class='badge bg-red'>"+obj.viewcnt+"</span></td></tr>" ;
+					});
+					$("#tbody").empty().append(txt);
+
+               }
+           })
+
+       })
+   })
+
+</script>
+
+{% endblock %}
+{% include 'footer.html' %}
+

@@ -1,0 +1,92 @@
+{% include 'header.html' %}
+
+{% block content %}
+
+<!-- Main content -->
+<section class="content">
+	<div class="row">
+		<!-- left column -->
+		<div class="col-md-12">
+			<!-- general form elements -->
+			<div class="box box-primary">
+				<div class="box-header">
+					<h3 class="box-title">READ BOARD</h3>
+				</div>
+				<!-- /.box-header -->
+
+<form role="form" method="post">
+
+	<input type='hidden' name='id' value="OOO">
+
+</form>
+
+<div class="box-body">
+	<div class="form-group">
+		<label for="exampleInputEmail1">Title</label> <input type="text"
+			name='title' class="form-control" value="{{board.title}}"
+			readonly="readonly">
+	</div>
+	<div class="form-group">
+		<label for="exampleInputPassword1">Content</label>
+		<textarea class="form-control" name="content" rows="3"
+			readonly="readonly">{{board.content}}</textarea>
+	</div>
+	<div class="form-group">
+		<label for="exampleInputEmail1">Writer</label> <input type="text"
+			name="writer" class="form-control" value="{{board.writer}}"
+			readonly="readonly">
+	</div>
+</div>
+<!-- /.box-body -->
+
+<div class="box-footer">
+	<button type="button" class="btn btn-primary" id ="listBtn">List</button>
+
+	{% if id == board.writer %}
+	<button type="button" class="btn btn-warning" id ="modiBtn">Modify</button>
+	<button type="button" class="btn btn-danger" id ="remoBtn">Remove</button>
+	{% endif %}
+<!-- form 의 submit 형식이 아니기 때문에 버튼에 기능을 부여하려면, 스크립트를 활용해야함 -->
+</div>
+
+<form method="post" id="removeFrm">
+	{% csrf_token %}
+	<input type="hidden" name="id" value="{{board.id}}">
+</form>
+<!-- form은 submit에 의해 action으로 넘어감. submit과 action이 없으면, script를 활용 -->
+
+<script>
+
+	$(document).ready(function() {
+		$('#listBtn').click(function () {
+			location.href =  '../bbs_list'
+		})
+
+		$('#remoBtn').click(function () {
+			// $('#removeFrm').attr('action', "bbs_remove").submit()
+			$('#removeFrm').attr('action', "{% url 'bbs_remove' %}").submit()
+		})
+		$('#modiBtn').click(function () {
+            $('#removeFrm').attr('action', "{% url 'bbs_modifyForm' %}").submit()
+		})
+	});
+
+</script>
+
+
+
+
+			</div>
+			<!-- /.box -->
+		</div>
+		<!--/.col (left) -->
+
+	</div>
+	<!-- /.row -->
+</section>
+<!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+{% endblock %}
+{% include 'footer.html' %}
