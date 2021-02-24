@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <div align="center">{{ment}}</div>
+    <hr/>
+    <form method = "post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <input type="text" name="msg">
+        <input type="submit" value="send">
+    </form>
+    <hr/>
+    <a href="{% url 'baseball' %}">야구</a></p>
+    <a href="../football">축구</a></p>
+    <a href="../basketball">농구</a></p>
+</body>
+</html>
+
